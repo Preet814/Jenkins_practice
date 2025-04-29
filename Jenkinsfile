@@ -1,25 +1,50 @@
-pipeline{
+pipeline {
     agent any
+
     environment {
-        web_directory = '/var/www/html'
-        EC2_IP = '13.201.225.46'
+        APACHE_SERVER = "43.204.108.77"  // Apache server IP (EC2 or other)
+        APACHE_USER = "ubuntu"  // SSH Username (e.g., ubuntu for EC2)
+        SSH_KEY = credentials('jenkins-ssh-key-id')  // Jenkins credential ID for SSH private key
+        WEBSITE_DIR = "/var/www/html"  // Apache document root
     }
-    stages{
-        stage('Clone git repos') {
+
+    stages {
+        stage('Checkout Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/Preet814/Jenkins_practice.git'
+                // Checkout the code from GitHub (assuming you have a simple index.html file)
+                git 'https://github.com/Preet814/Jenkins_practice.git'
             }
         }
+
         stage('Deploy to Apache Server') {
             steps {
-                sshagent(['apache-server-ssh']) {  // Use the credentials ID added earlier
-                    sh '''
-                        ssh root@${EC2_IP} "sudo rm -rf ${web_directory}/*"
-                        scp -r * root@${EC2_IP}:${web_directory}/
-                        ssh root@${EC2_IP} "sudo systemctl restart apache2"
-                    '''
+                script {
+                    // Deploy the index.html file to the Apache server's document root
+                    sh """
+                    scp -i ${SSH_KEY} index.html ${APACHE_USER}@${APACHE_SERVER}:${WEBSITE_DIR}
+                    """
                 }
             }
+        }
+
+        stage('Restart Apache') {
+            steps {
+                script {
+                    // Restart Apache server to serve the new index.html
+                    sh """
+                    ssh -i ${SSH_KEY} ${APACHE_USER}@${APACHE_SERVER} 'sudo systemctl restart apache2'
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Deployment Successful! Static website deployed."
+        }
+        failure {
+            echo "Deployment Failed!"
         }
     }
 }
