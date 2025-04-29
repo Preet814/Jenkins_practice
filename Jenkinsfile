@@ -2,8 +2,6 @@ pipeline{
     agent any
     environment {
         web_directory = '/var/www/html'
-    }
-     environment {
         EC2_IP = '13.201.225.46'
     }
     stages{
