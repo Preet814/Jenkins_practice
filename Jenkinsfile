@@ -1,5 +1,8 @@
 pipeline{
     agent any
+    environment {
+        web_directory = '/var/www/html'
+    }
     stages{
         stage('Clone git repos') {
             steps {
