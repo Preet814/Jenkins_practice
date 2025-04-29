@@ -12,14 +12,14 @@ pipeline{
         stage('Deploy to apache') {
             steps {
                 sh '''
-                    sudo rm -rf ${web_directory}/*
-                    sudo cp index.html ${web_directory}/
+                    rm -rf ${web_directory}/*
+                    cp index.html ${web_directory}/
                 '''
             }
         }
         stage('Restart Apache') {
             steps {
-                sh 'sudo service apache restart'
+                sh 'service apache restart'
             }
         }
     }
