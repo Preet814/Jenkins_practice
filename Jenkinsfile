@@ -22,14 +22,7 @@ pipeline {
             steps {
                 sshagent (credentials: ['jenkins-ssh-key-id']) {
                     sh """
-                        # Ensure ~/.ssh directory exists
-                        [ -d ~/.ssh ] || mkdir ~/.ssh && chmod 0700 ~/.ssh
-                        
-                        // # Add EC2 host to known_hosts using env vars
-                        // ssh-keyscan -H $APACHE_SERVER >> ~/.ssh/known_hosts
-                        
-                        // # Run echo on EC2 using env vars
-                        // ssh $APACHE_USER@$APACHE_SERVER 'echo Hello from EC2 using Jenkins pipeline!'
+                        ssh -o StrictHostKeyChecking=no ${APACHE_USER}@${APACHE_SERVER} "echo Connection Successful from Jenkins!"
                     """
                 }
             }
