@@ -13,10 +13,10 @@ pipeline {
             steps {
                 // Checkout the code from GitHub (assuming you have a simple index.html file)
                 git branch: 'main', url: 'https://github.com/Preet814/Jenkins_practice.git'
-                echo '${APACHE_SERVER}'
-                echo '${APACHE_USER}'
-                echo '${SSH_KEY}'
-                echo '${WEBSITE_DIR}'
+                echo "${APACHE_SERVER}"
+                echo "${APACHE_USER}"
+                echo "${SSH_KEY}"
+                echo "${WEBSITE_DIR}"
             }
         }
 
