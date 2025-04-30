@@ -32,6 +32,7 @@ pipeline {
                         ssh $APACHE_USER@$APACHE_SERVER 'echo Hello from EC2 using Jenkins pipeline!'
                     '''
                 }
+            }
         }
 
         // stage('Restart Apache') {
