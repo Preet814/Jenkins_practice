@@ -10,43 +10,21 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                // Checkout the code from GitHub (assuming you have a simple index.html file)
                 git branch: 'main', url: 'https://github.com/Preet814/Jenkins_practice.git'
-                echo "${APACHE_SERVER}"
-                echo "${APACHE_USER}"
-                echo "${WEBSITE_DIR}"
             }
         }
 
         stage('Deploy to Apache Server') {
             steps {
-                // sshagent (credentials: ['jenkins-ssh-key-id']) {
-                //     sh """
-                //         ssh -o StrictHostKeyChecking=no ${APACHE_USER}@${APACHE_SERVER} "echo Connection Successful from Jenkins!"
-                //     """
-                // }
                 sshagent (credentials: ['jenkins-ssh-key-id']) {
                     sh """
                         echo "Copying files to EC2 Apache server..."
                         scp -o StrictHostKeyChecking=no index.html ${APACHE_USER}@${APACHE_SERVER}:/home/ubuntu/
-
-                        # Step 2: SSH and move file using sudo
                         ssh -o StrictHostKeyChecking=no ${APACHE_USER}@${APACHE_SERVER} "sudo mv /home/ubuntu/index.html ${WEBSITE_DIR}"
                     """
                 }
             }
         }
-
-        // stage('Restart Apache') {
-        //     steps {
-        //         script {
-        //             // Restart Apache server to serve the new index.html
-        //             sh """
-        //             ssh -i ${SSH_KEY} ${APACHE_USER}@${APACHE_SERVER} 'sudo systemctl restart apache2'
-        //             """
-        //         }
-        //     }
-        // }
     }
 
     post {
