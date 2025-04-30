@@ -4,7 +4,6 @@ pipeline {
     environment {
         APACHE_SERVER = "43.204.108.77"  // Apache server IP (EC2 or other)
         APACHE_USER = "ubuntu"  // SSH Username (e.g., ubuntu for EC2)
-        SSH_KEY = credentials('jenkins-ssh-key-id')  // Jenkins credential ID for SSH private key
         WEBSITE_DIR = "/var/www/html"  // Apache document root
     }
 
@@ -15,21 +14,25 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/Preet814/Jenkins_practice.git'
                 echo "${APACHE_SERVER}"
                 echo "${APACHE_USER}"
-                echo "${SSH_KEY}"
                 echo "${WEBSITE_DIR}"
             }
         }
 
-        // stage('Deploy to Apache Server') {
-        //     steps {
-        //         script {
-        //             // Deploy the index.html file to the Apache server's document root
-        //             sh """
-        //             scp -i ${SSH_KEY} index.html ${APACHE_USER}@${APACHE_SERVER}:${WEBSITE_DIR}
-        //             """
-        //         }
-        //     }
-        // }
+        stage('Deploy to Apache Server') {
+            steps {
+                sshagent (credentials: ['jenkins-ssh-key-id']) {
+                    sh '''
+                        # Ensure ~/.ssh directory exists
+                        [ -d ~/.ssh ] || mkdir ~/.ssh && chmod 0700 ~/.ssh
+                        
+                        # Add EC2 host to known_hosts using env vars
+                        ssh-keyscan -H $APACHE_SERVER >> ~/.ssh/known_hosts
+                        
+                        # Run echo on EC2 using env vars
+                        ssh $APACHE_USER@$APACHE_SERVER 'echo Hello from EC2 using Jenkins pipeline!'
+                    '''
+                }
+        }
 
         // stage('Restart Apache') {
         //     steps {
