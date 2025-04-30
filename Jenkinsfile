@@ -21,7 +21,7 @@ pipeline {
         stage('Deploy to Apache Server') {
             steps {
                 sshagent (credentials: ['jenkins-ssh-key-id']) {
-                    sh '''
+                    sh """
                         # Ensure ~/.ssh directory exists
                         [ -d ~/.ssh ] || mkdir ~/.ssh && chmod 0700 ~/.ssh
                         
@@ -30,7 +30,7 @@ pipeline {
                         
                         # Run echo on EC2 using env vars
                         ssh $APACHE_USER@$APACHE_SERVER 'echo Hello from EC2 using Jenkins pipeline!'
-                    '''
+                    """
                 }
             }
         }
