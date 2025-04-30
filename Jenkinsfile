@@ -20,7 +20,7 @@ pipeline {
 
         stage('Deploy to Apache Server') {
             steps {
-                sshagent (credentials: ['jenkins-ssh-key-id']) {
+                sshagent (credentials: ['ubuntu']) {
                     sh """
                         # Ensure ~/.ssh directory exists
                         [ -d ~/.ssh ] || mkdir ~/.ssh && chmod 0700 ~/.ssh
