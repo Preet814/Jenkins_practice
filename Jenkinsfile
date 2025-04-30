@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        APACHE_SERVER = "43.204.108.77"  // Apache server IP (EC2 or other)
+        APACHE_SERVER = "65.1.94.191"  // Apache server IP (EC2 or other)
         APACHE_USER = "ubuntu"  // SSH Username (e.g., ubuntu for EC2)
         WEBSITE_DIR = "/var/www/html"  // Apache document root
     }
