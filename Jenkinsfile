@@ -20,9 +20,17 @@ pipeline {
 
         stage('Deploy to Apache Server') {
             steps {
+                // sshagent (credentials: ['jenkins-ssh-key-id']) {
+                //     sh """
+                //         ssh -o StrictHostKeyChecking=no ${APACHE_USER}@${APACHE_SERVER} "echo Connection Successful from Jenkins!"
+                //     """
+                // }
                 sshagent (credentials: ['jenkins-ssh-key-id']) {
                     sh """
-                        ssh -o StrictHostKeyChecking=no ${APACHE_USER}@${APACHE_SERVER} "echo Connection Successful from Jenkins!"
+                        echo "Copying files to EC2 Apache server..."
+        
+                        # Use SCP to transfer files to EC2's Apache directory
+                        scp -o StrictHostKeyChecking=no index.html ${APACHE_USER}@${APACHE_SERVER}:${WEBSITE_DIR}
                     """
                 }
             }
